@@ -14,16 +14,22 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.telematica.android.certamen3.database.DataBaseClass;
+import cl.telematica.android.certamen3.presenter.MainPresenterImpl;
+import cl.telematica.android.certamen3.presenter.MyAsyncTaskExecutor;
+import cl.telematica.android.certamen3.model.Feed;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    public static DataBaseClass dbInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        dbInstance = new DataBaseClass(this);
         createMyRecyclerView();
         MyAsyncTaskExecutor.getInstance().executeMyAsynctask(this, mRecyclerView);
     }
@@ -36,35 +42,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
-    public List<Feed> getFeeds(String result) {
-        List<Feed> feeds = new ArrayList<>();
-        try {
-            JSONObject jsonObject = new JSONObject(result);
-            JSONObject responseData = jsonObject.getJSONObject("responseData");
-            JSONObject feedObj = responseData.getJSONObject("feed");
 
-            JSONArray entries = feedObj.getJSONArray("entries");
-            int size = entries.length();
-            for(int i = 0; i < size; i++){
-                JSONObject entryObj = entries.getJSONObject(i);
-                Feed feed = new Feed();
-
-                feed.setTitle(entryObj.optString("title"));
-                feed.setLink(entryObj.optString("link"));
-                feed.setAuthor(entryObj.optString("author"));
-                feed.setPublishedDate(entryObj.optString("publishedDate"));
-                feed.setContent(entryObj.optString("content"));
-                feed.setImage(entryObj.optString("image"));
-
-                feeds.add(feed);
-            }
-
-            return feeds;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return feeds;
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
             /**
              * You should manage the action to show the favorite items saved by the user
              */
+            ArrayList<Feed> lista =new ArrayList<>() ;
+            MainPresenterImpl.chargeFromDataBase(dbInstance,lista);
+
             return true;
         }
 

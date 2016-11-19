@@ -1,7 +1,11 @@
-package cl.telematica.android.certamen3;
+package cl.telematica.android.certamen3.presenter;
 
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+
+import cl.telematica.android.certamen3.DataAdapter;
+import cl.telematica.android.certamen3.MainActivity;
+import cl.telematica.android.certamen3.connection.HttpServerConnection;
 
 /**
  * Created by franciscocabezas on 11/18/16.
@@ -40,7 +44,7 @@ public class MyAsyncTaskExecutor {
                     System.out.println(result);
 
                     //Why god... why
-                    mAdapter = new DataAdapter(activity, activity.getFeeds(result));
+                    mAdapter = new DataAdapter(activity, MainPresenter.getFeeds(result));
                     mRecyclerView.setAdapter(mAdapter);
                 }
             }
